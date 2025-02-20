@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace UpBank;
+namespace UpBank.Query;
 
 public class UpQueryReader<T>
 {

@@ -1,7 +1,7 @@
 using System.Collections.Specialized;
 using System.Web;
 
-namespace UpBank;
+namespace UpBank.Query;
 
 public class UpQuery<T> : IDisposable
 {

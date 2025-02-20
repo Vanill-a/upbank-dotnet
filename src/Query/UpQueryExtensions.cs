@@ -1,4 +1,4 @@
-namespace UpBank;
+namespace UpBank.Query;
 
 public static class UpQueryExtensions
 {
