@@ -51,7 +51,7 @@ public class UpClient : IDisposable
         var content = JsonContent.Create(input);
         var response = await _Client.PatchAsync(uri, content);
 
-        await EnsureSuccess(response);
+        await response.EnsureUpSuccess();
     }
 
     #endregion;
@@ -81,7 +81,7 @@ public class UpClient : IDisposable
 
         var response = await _Client.SendAsync(message);
 
-        await EnsureSuccess(response);
+        await response.EnsureUpSuccess();
     }
 
     #endregion;
@@ -105,7 +105,7 @@ public class UpClient : IDisposable
     {
         var response = await _Client.GetAsync("/util/ping");
 
-        await EnsureSuccess(response);
+        await response.EnsureUpSuccess();
 
         var json = await response.Content.ReadAsStringAsync();
         var output = JsonSerializer.Deserialize<UpPingResponse>(json);
@@ -123,6 +123,9 @@ public class UpClient : IDisposable
     public UpQuery<UpWebhookResource> CreateWebhookQuery()
         => new UpQuery<UpWebhookResource>(_Client, "webhooks");
 
+    public UpQuery<UpWebhookDeliveryLogResource> CreateWebhookLogQuery(string webhookId)
+        => new UpQuery<UpWebhookDeliveryLogResource>(_Client, $"webhooks/{webhookId}/logs");
+
     public async Task<UpWebhookResource> GetWebhook(string webhookId)
         => await GetResource<UpWebhookResource>($"/webhooks/{webhookId}");
 
@@ -134,7 +137,7 @@ public class UpClient : IDisposable
         var uri = $"/webhooks/{webhookId}";
         var response = await _Client.DeleteAsync(uri);
 
-        await EnsureSuccess(response);
+        await response.EnsureUpSuccess();
     }
 
     public async Task<UpWebhookEventResource> PingWebhook(string webhookId)
@@ -142,7 +145,7 @@ public class UpClient : IDisposable
         var uri = $"/webhooks/{webhookId}/ping";
         var response = await _Client.PostAsync(uri, null);
 
-        await EnsureSuccess(response);
+        await response.EnsureUpSuccess();
 
         var json = await response.Content.ReadAsStringAsync();
         var output = JsonSerializer.Deserialize<UpWebhookEventResource>(json);
@@ -153,21 +156,13 @@ public class UpClient : IDisposable
         return output;
     }
 
-    public async Task<IEnumerable<UpWebhookDeliveryLogResource>> GetWebhookLogs(string webhookId,
-        UpWebhookQuery? query)
-    {
-        return await GetResources<UpWebhookDeliveryLogResource>(
-            endpoint: $"/webhooks/{webhookId}/logs",
-            query: query);
-    }
-
     #endregion
 
     public async Task<T> GetResource<T>(string endpoint) where T : class
     {
         var response = await _Client.GetAsync(endpoint);
 
-        await EnsureSuccess(response);
+        await response.EnsureUpSuccess();
 
         var stream = await response.Content.ReadAsStreamAsync();
         var data = await JsonSerializer.DeserializeAsync<UpResponse<T>>(stream);
@@ -176,59 +171,6 @@ public class UpClient : IDisposable
             throw new InvalidOperationException("Deserialization returned null.");
 
         return data.Data;
-    }
-
-    public async Task<IEnumerable<T>> GetResources<T>(string endpoint,
-        IUpQuery? query = null)
-        where T : class
-    {
-        var uribuilder = new UriBuilder(endpoint);
-        var querystring = 
-            query is not null
-            ? query.GetQueryString()
-            : string.Empty;
-
-        if (!string.IsNullOrEmpty(querystring))
-            uribuilder.Query = querystring;
-
-        var uri = uribuilder.ToString();
-        var output = new List<T>();
-
-        while (!string.IsNullOrEmpty(uri))
-        {
-            var response = await _Client.GetAsync(uri);
-
-            await EnsureSuccess(response);
-
-            var stream = await response.Content.ReadAsStreamAsync();
-            var page = await JsonSerializer.DeserializeAsync<UpPageResponse<T>>(stream);
-
-            if (page is null)
-                throw new InvalidOperationException("Deserialization returned null.");
-
-            output.AddRange(page.Data);
-            uri = page.Links.Next;
-        }
-
-        return output;
-    }
-
-    private async Task EnsureSuccess(HttpResponseMessage response)
-    {
-        if (response.IsSuccessStatusCode)
-            return;
-
-        var stream = await response.Content.ReadAsStreamAsync();
-        var error = await JsonSerializer.DeserializeAsync<UpErrorResponse>(stream);
-
-        if (error is null)
-            throw new InvalidOperationException("Deserialization returned null.");
-
-        var message = string.IsNullOrEmpty(response.ReasonPhrase)
-            ? $"The request failed with status {response.StatusCode}."
-            : $"The request failed with status {response.StatusCode}. ({response.ReasonPhrase})";
-
-        throw new UpApiException(message, error.Errors);
     }
 
     public void Dispose()

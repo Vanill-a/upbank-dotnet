@@ -40,7 +40,7 @@ public class UpQueryReader<T>
 
         var response = await _GetNextResponse(_Client);
 
-        await EnsureSuccess(response);
+        await response.EnsureUpSuccess();
 
         var stream = await response.Content.ReadAsStreamAsync();
         var page = await JsonSerializer.DeserializeAsync<UpPageResponse<T>>(stream);
@@ -57,23 +57,5 @@ public class UpQueryReader<T>
             : null;
 
         return output;
-    }
-
-    private async Task EnsureSuccess(HttpResponseMessage response)
-    {
-        if (response.IsSuccessStatusCode)
-            return;
-
-        var stream = await response.Content.ReadAsStreamAsync();
-        var error = await JsonSerializer.DeserializeAsync<UpErrorResponse>(stream);
-
-        if (error is null)
-            throw new InvalidOperationException("Deserialization returned null.");
-
-        var message = string.IsNullOrEmpty(response.ReasonPhrase)
-            ? $"The request failed with status {response.StatusCode}."
-            : $"The request failed with status {response.StatusCode}. ({response.ReasonPhrase})";
-
-        throw new UpApiException(message, error.Errors);
     }
 }
