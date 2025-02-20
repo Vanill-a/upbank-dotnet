@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace UpBank;
 
-public class UpPageResponse<T> where T : class
+public class UpPageResponse<T>
 {
     [JsonPropertyName("data")]
     public IEnumerable<T> Data { get; set; }

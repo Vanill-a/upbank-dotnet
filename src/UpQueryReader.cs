@@ -4,7 +4,9 @@ namespace UpBank;
 
 public class UpQueryReader<T>
 {
-    internal UpQueryReader(HttpClient client, Func<Task<HttpResponseMessage>> executeQuery)
+    internal UpQueryReader(
+        HttpClient client,
+        Func<HttpClient, Task<HttpResponseMessage>> executeQuery)
     {
         this.EndOfQuery = false;
 
@@ -15,7 +17,7 @@ public class UpQueryReader<T>
     public bool EndOfQuery { get; private set; }
 
     private readonly HttpClient _Client;
-    private Func<Task<HttpResponseMessage>>? _GetNextResponse;
+    private Func<HttpClient, Task<HttpResponseMessage>>? _GetNextResponse;
 
     public async Task<IEnumerable<T>> GetAllRemainingPageData()
     {
@@ -36,9 +38,9 @@ public class UpQueryReader<T>
         if (_GetNextResponse is null)
             throw new InvalidOperationException();
 
-        var response = await _GetNextResponse();
+        var response = await _GetNextResponse(_Client);
 
-        // ensure success status code
+        await EnsureSuccess(response);
 
         var stream = await response.Content.ReadAsStreamAsync();
         var page = await JsonSerializer.DeserializeAsync<UpPageResponse<T>>(stream);
@@ -51,9 +53,27 @@ public class UpQueryReader<T>
 
         EndOfQuery = string.IsNullOrEmpty(nexturi);
         _GetNextResponse = !EndOfQuery
-            ? new Func<Task<HttpResponseMessage>>(() => _Client.GetAsync(nexturi))
+            ? new Func<HttpClient, Task<HttpResponseMessage>>(client => client.GetAsync(nexturi))
             : null;
 
         return output;
+    }
+
+    private async Task EnsureSuccess(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode)
+            return;
+
+        var stream = await response.Content.ReadAsStreamAsync();
+        var error = await JsonSerializer.DeserializeAsync<UpErrorResponse>(stream);
+
+        if (error is null)
+            throw new InvalidOperationException("Deserialization returned null.");
+
+        var message = string.IsNullOrEmpty(response.ReasonPhrase)
+            ? $"The request failed with status {response.StatusCode}."
+            : $"The request failed with status {response.StatusCode}. ({response.ReasonPhrase})";
+
+        throw new UpApiException(message, error.Errors);
     }
 }

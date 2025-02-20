@@ -14,32 +14,31 @@ public class UpClient : IDisposable
 
     #region Accounts
 
+    public UpQuery<UpAccountResource> CreateAccountQuery()
+        => new UpQuery<UpAccountResource>(_Client, "accounts");
+
     public async Task<UpAccountResource> GetAccount(string accountId)
         => await GetResource<UpAccountResource>($"/accounts/{accountId}");
-
-    public async Task<IEnumerable<UpAccountResource>>GetAccounts(
-        UpAccountQuery query)
-        => await GetResources<UpAccountResource>("/accounts", query);
 
     #endregion;
 
     #region Attachments
 
+    public UpQuery<UpAttachmentResource> CreateAttachmentQuery()
+        => new UpQuery<UpAttachmentResource>(_Client, "attachments");
+
     public async Task<UpAttachmentResource> GetAttachment(string attachmentId)
         => await GetResource<UpAttachmentResource>($"/attachments/{attachmentId}");
-
-    public async Task<IEnumerable<UpAttachmentResource>> GetAttachments()
-        => await GetResources<UpAttachmentResource>("/attachments");
 
     #endregion;
 
     #region Categories;
 
+    public UpQuery<UpCategoryResource> CreateCategoryQuery()
+        => new UpQuery<UpCategoryResource>(_Client, "categories");
+
     public async Task<UpCategoryResource> GetCategory(string categoryId)
         => await GetResource<UpCategoryResource>($"/categories/{categoryId}");
-
-    public async Task<IEnumerable<UpCategoryResource>> GetCategories(UpCategoryQuery query)
-        => await GetResources<UpCategoryResource>("/categories", query);
 
     public async Task CategorizeTransaction(string transactionId, string? categoryId = null)
     {
@@ -58,8 +57,8 @@ public class UpClient : IDisposable
 
     #region Tags
 
-    public async Task<IEnumerable<UpTagResource>> GetTags(UpTagQuery query)
-        => await GetResources<UpTagResource>("/tags", query);
+    public UpQuery<UpTagResource> CreateTagQuery()
+        => new UpQuery<UpTagResource>(_Client, "tags");
 
     public async Task AddTagsToTransaction(string transactionId, IEnumerable<string> tagIds)
         => await ModifyTransactionTags(transactionId, tagIds, HttpMethod.Post);
@@ -88,19 +87,14 @@ public class UpClient : IDisposable
 
     #region Transactions
 
+    public UpQuery<UpTransactionResource> CreateTransactionQuery()
+        => new UpQuery<UpTransactionResource>(_Client, "transactions");
+
+    public UpQuery<UpTransactionResource> CreateAccountTransactionQuery(string accountId)
+        => new UpQuery<UpTransactionResource>(_Client, $"accounts/{accountId}/transactions");
+
     public async Task<UpTransactionResource> GetTransaction(string transactionId)
         => await GetResource<UpTransactionResource>($"/transactions{transactionId}");
-
-    public async Task<IEnumerable<UpTransactionResource>> GetTransactions(UpTransactionQuery query)
-        => await GetResources<UpTransactionResource>("/transactions", query);
-
-    public async Task<IEnumerable<UpTransactionResource>> GetAccountTransactions(string accountId,
-        UpTransactionQuery? query = null)
-    {
-        return await GetResources<UpTransactionResource>(
-            endpoint: $"/accounts/{accountId}/transactions",
-            query: query);
-    }
 
     #endregion
 
@@ -109,7 +103,7 @@ public class UpClient : IDisposable
     public async Task<UpPingResponse> Ping()
     {
         var response = await _Client.GetAsync("/util/ping");
-        
+
         await EnsureSuccess(response);
 
         var json = await response.Content.ReadAsStringAsync();
@@ -125,14 +119,14 @@ public class UpClient : IDisposable
 
     #region Webhooks
 
+    public UpQuery<UpWebhookResource> CreateWebhookQuery()
+        => new UpQuery<UpWebhookResource>(_Client, "webhooks");
+
     public async Task<UpWebhookResource> GetWebhook(string webhookId)
         => await GetResource<UpWebhookResource>($"/webhooks/{webhookId}");
 
-    public async Task<IEnumerable<UpWebhookResource>> GetWebhooks(UpWebhookQuery? query)
-        => await GetResources<UpWebhookResource>("/webhooks", query);
-
-    public async Task<UpWebhookResource> CreateWebhook()
-        => throw new NotImplementedException();
+    //public async Task<UpWebhookResource> CreateWebhook()
+    //    => throw new NotImplementedException();
 
     public async Task DeleteWebhook(string webhookId)
     {
