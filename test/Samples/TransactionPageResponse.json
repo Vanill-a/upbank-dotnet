@@ -1,0 +1,77 @@
+{
+  "data": [
+    {
+      "type": "transactions",
+      "id": "9d6af012-ebce-4458-b5d2-f24b74224a5b",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": null,
+        "description": "David Taylor",
+        "message": "Money for the pizzas last night.",
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-59.98",
+          "valueInBaseUnits": -5998
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2025-02-13T07:18:24+11:00",
+        "createdAt": "2025-02-13T07:18:24+11:00",
+        "transactionType": null,
+        "note": null,
+        "performingCustomer": {
+          "displayName": "Bobby"
+        },
+        "deepLinkURL": "up://transaction/VHJhbnNhY3Rpb24tMzg="
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "cba6c27b-edcb-42f6-bab0-45c1df9b453c"
+          },
+          "links": {
+            "related": "https://api.up.com.au/api/v1/accounts/cba6c27b-edcb-42f6-bab0-45c1df9b453c"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": null,
+          "links": {
+            "self": "https://api.up.com.au/api/v1/transactions/9d6af012-ebce-4458-b5d2-f24b74224a5b/relationships/category"
+          }
+        },
+        "parentCategory": {
+          "data": null
+        },
+        "tags": {
+          "data": [
+            {
+              "type": "tags",
+              "id": "Pizza Night"
+            }
+          ],
+          "links": {
+            "self": "https://api.up.com.au/api/v1/transactions/9d6af012-ebce-4458-b5d2-f24b74224a5b/relationships/tags"
+          }
+        },
+        "attachment": {
+          "data": null
+        }
+      },
+      "links": {
+        "self": "https://api.up.com.au/api/v1/transactions/9d6af012-ebce-4458-b5d2-f24b74224a5b"
+      }
+    }
+  ],
+  "links": {
+    "prev": null,
+    "next": null
+  }
+}

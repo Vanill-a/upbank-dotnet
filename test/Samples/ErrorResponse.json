@@ -1,0 +1,10 @@
+{
+  "errors": [{
+    "status": "422",
+    "title": "Invalid Request Payload",
+    "detail": "fixed value \"tags\" required",
+    "source": {
+      "pointer": "/data/0/type"
+    }
+  }]
+}
