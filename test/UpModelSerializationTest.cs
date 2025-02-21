@@ -1,6 +1,6 @@
 ﻿namespace Upbank.Test;
 
-public class UnitTest1
+public class UpModelSerializationTest
 {
     [Fact]
     public void Test1()

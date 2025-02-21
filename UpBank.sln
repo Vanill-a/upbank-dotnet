@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpBank", "src\UpBank.csproj", "{4942478A-18B7-4F8F-B7E2-E968DD5347F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upbank.Test", "test\Upbank.Test.csproj", "{F10CE1C8-9538-48BB-8255-9CBB6D65283A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpBank.Test", "test\UBbank.Test.csproj", "{F10CE1C8-9538-48BB-8255-9CBB6D65283A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
