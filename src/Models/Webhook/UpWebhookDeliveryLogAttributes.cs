@@ -1,12 +1,14 @@
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 namespace UpBank;
 
+[JsonConverter(typeof(UpJsonEnumConverter<WebhookDeliveryStatus>))]
 public enum WebhookDeliveryStatus
 {
-    Delivered,
-    Undeliverable,
-    BadResponseCode,
+    [EnumMember(Value = "DELIVERED")] Delivered,
+    [EnumMember(Value = "UNDELIVERABLE")] Undeliverable,
+    [EnumMember(Value = "BAD_RESPONSE_CODE")] BadResponseCode,
 }
 
 public class UpWebhookDeliveryLogAttributes
@@ -18,7 +20,7 @@ public class UpWebhookDeliveryLogAttributes
     public UpWebhookResponse Response { get; set; }
 
     [JsonPropertyName("deliveryStatus")]
-    public string DeliveryStatus { get; set; }
+    public WebhookDeliveryStatus DeliveryStatus { get; set; }
 
     [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; }

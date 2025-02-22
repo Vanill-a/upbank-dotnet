@@ -1,12 +1,21 @@
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 namespace UpBank;
 
+[JsonConverter(typeof(UpJsonEnumConverter<UpAccountType>))]
 public enum UpAccountType
 {
-    Saver,
-    Transactional,
-    HomeLoan,
+    [EnumMember(Value = "SAVER")] Saver,
+    [EnumMember(Value = "TRANSACTIONAL")] Transactional,
+    [EnumMember(Value = "HOME_LOAN")] HomeLoan,
+}
+
+[JsonConverter(typeof(UpJsonEnumConverter<UpOwnershipType>))]
+public enum UpOwnershipType
+{
+    [EnumMember(Value = "INDIVIDUAL")] Individual,
+    [EnumMember(Value = "JOINT")] Joint,
 }
 
 public class UpAccountAttributes
@@ -15,7 +24,10 @@ public class UpAccountAttributes
     public string DisplayName { get; set; }
 
     [JsonPropertyName("accountType")]
-    public string AccountType { get; set; }
+    public UpAccountType AccountType { get; set; }
+
+    [JsonPropertyName("ownershipType")]
+    public UpOwnershipType OwnershipType { get; set; }
 
     [JsonPropertyName("balance")]
     public UpMoney Balance { get; set; }

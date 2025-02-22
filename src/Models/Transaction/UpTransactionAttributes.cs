@@ -1,17 +1,19 @@
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 namespace UpBank;
 
+[JsonConverter(typeof(UpJsonEnumConverter<UpTransactionStatus>))]
 public enum UpTransactionStatus
 {
-    Held,
-    Settled
+    [EnumMember(Value = "HELD")] Held,
+    [EnumMember(Value = "SETTLED")] Settled,
 }
 
 public class UpTransactionAttributes
 {
     [JsonPropertyName("status")]
-    public string Status { get; set; }
+    public UpTransactionStatus Status { get; set; }
 
     [JsonPropertyName("rawText")]
     public string RawText { get; set; }

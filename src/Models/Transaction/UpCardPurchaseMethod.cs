@@ -1,23 +1,25 @@
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 namespace UpBank;
 
+[JsonConverter(typeof(UpJsonEnumConverter<UpCardPurchaseMethodType>))]
 public enum UpCardPurchaseMethodType
 {
-    BarCode,
-    Ocr,
-    CardPin,
-    CardDetails,
-    CardOnFile,
-    ECommerce,
-    MagneticStripe,
-    Contactless
+    [EnumMember(Value = "BAR_CODE")] BarCode,
+    [EnumMember(Value = "OCR")] Ocr,
+    [EnumMember(Value = "CARD_PIN")] CardPin,
+    [EnumMember(Value = "CARD_DETAILS")] CardDetails,
+    [EnumMember(Value = "CARD_ON_FILE")] CardOnFile,
+    [EnumMember(Value = "ECOMMERCE")] ECommerce,
+    [EnumMember(Value = "MAGNETIC_STRIPE")] MagneticStripe,
+    [EnumMember(Value = "CONTACTLESS")] Contactless
 }
 
 public class UpCardPurchaseMethod
 {
     [JsonPropertyName("method")]
-    public string Method { get; set; }
+    public UpCardPurchaseMethodType Method { get; set; }
 
     [JsonPropertyName("cardNumberSuffix")]
     public string CardNumberSuffix { get; set; }
