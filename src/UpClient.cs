@@ -19,7 +19,7 @@ public class UpClient : IDisposable
         => new UpQuery<UpAccountResource>(_Client, "accounts");
 
     public async Task<UpAccountResource> GetAccount(string accountId)
-        => await GetResource<UpAccountResource>($"/accounts/{accountId}");
+        => await GetResource<UpAccountResource>($"accounts/{accountId}");
 
     #endregion;
 
@@ -29,7 +29,7 @@ public class UpClient : IDisposable
         => new UpQuery<UpAttachmentResource>(_Client, "attachments");
 
     public async Task<UpAttachmentResource> GetAttachment(string attachmentId)
-        => await GetResource<UpAttachmentResource>($"/attachments/{attachmentId}");
+        => await GetResource<UpAttachmentResource>($"attachments/{attachmentId}");
 
     #endregion;
 
@@ -39,11 +39,11 @@ public class UpClient : IDisposable
         => new UpQuery<UpCategoryResource>(_Client, "categories");
 
     public async Task<UpCategoryResource> GetCategory(string categoryId)
-        => await GetResource<UpCategoryResource>($"/categories/{categoryId}");
+        => await GetResource<UpCategoryResource>($"categories/{categoryId}");
 
     public async Task CategorizeTransaction(string transactionId, string? categoryId = null)
     {
-        var uri = $"/transactions/{transactionId}/relationships/category";
+        var uri = $"transactions/{transactionId}/relationships/category";
         var input = !string.IsNullOrEmpty(categoryId)
             ? new UpRelationshipData("categories", categoryId)
             : null;
@@ -69,7 +69,7 @@ public class UpClient : IDisposable
 
     private async Task ModifyTransactionTags(string transactionId, IEnumerable<string> tagIds, HttpMethod method)
     {
-        var uri = $"/transactions/{transactionId}/relationships/tags";
+        var uri = $"transactions/{transactionId}/relationships/tags";
         var tags = tagIds.Select(id => new UpRelationshipData("tags", id));
         var content = JsonContent.Create(tags);
         var message = new HttpRequestMessage
@@ -95,7 +95,7 @@ public class UpClient : IDisposable
         => new UpQuery<UpTransactionResource>(_Client, $"accounts/{accountId}/transactions");
 
     public async Task<UpTransactionResource> GetTransaction(string transactionId)
-        => await GetResource<UpTransactionResource>($"/transactions{transactionId}");
+        => await GetResource<UpTransactionResource>($"transactions/{transactionId}");
 
     #endregion
 
@@ -103,7 +103,7 @@ public class UpClient : IDisposable
 
     public async Task<UpPingResponse> Ping()
     {
-        var response = await _Client.GetAsync("/util/ping");
+        var response = await _Client.GetAsync("util/ping");
 
         await response.EnsureUpSuccess();
 
@@ -127,14 +127,14 @@ public class UpClient : IDisposable
         => new UpQuery<UpWebhookDeliveryLogResource>(_Client, $"webhooks/{webhookId}/logs");
 
     public async Task<UpWebhookResource> GetWebhook(string webhookId)
-        => await GetResource<UpWebhookResource>($"/webhooks/{webhookId}");
+        => await GetResource<UpWebhookResource>($"webhooks/{webhookId}");
 
     //public async Task<UpWebhookResource> CreateWebhook()
     //    => throw new NotImplementedException();
 
     public async Task DeleteWebhook(string webhookId)
     {
-        var uri = $"/webhooks/{webhookId}";
+        var uri = $"webhooks/{webhookId}";
         var response = await _Client.DeleteAsync(uri);
 
         await response.EnsureUpSuccess();
@@ -142,7 +142,7 @@ public class UpClient : IDisposable
 
     public async Task<UpWebhookEventResource> PingWebhook(string webhookId)
     {
-        var uri = $"/webhooks/{webhookId}/ping";
+        var uri = $"webhooks/{webhookId}/ping";
         var response = await _Client.PostAsync(uri, null);
 
         await response.EnsureUpSuccess();
