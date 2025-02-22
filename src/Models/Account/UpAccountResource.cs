@@ -4,8 +4,9 @@ namespace UpBank;
 
 public class UpAccountResource : UpResource
 {
-    [JsonPropertyName("type")]
-    public string AccountType { get; set; }
-    [JsonPropertyName("id")]
-    public string Id { get; set; }
+    [JsonPropertyName("attributes")]
+    public UpAccountAttributes Attributes { get; set; }
+
+    [JsonPropertyName("relationships")]
+    public UpAccountRelationships Relationships { get; set; }
 }

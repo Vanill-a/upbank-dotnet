@@ -17,7 +17,8 @@ public enum UpCardPurchaseMethodType
 public class UpCardPurchaseMethod
 {
     [JsonPropertyName("method")]
-    public UpCardPurchaseMethodType Method { get; set; }
+    public string Method { get; set; }
+
     [JsonPropertyName("cardNumberSuffix")]
     public string CardNumberSuffix { get; set; }
 }

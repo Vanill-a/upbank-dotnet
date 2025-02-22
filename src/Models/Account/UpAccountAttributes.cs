@@ -15,7 +15,7 @@ public class UpAccountAttributes
     public string DisplayName { get; set; }
 
     [JsonPropertyName("accountType")]
-    public UpAccountType AccountType { get; set; }
+    public string AccountType { get; set; }
 
     [JsonPropertyName("balance")]
     public UpMoney Balance { get; set; }

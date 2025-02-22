@@ -17,7 +17,7 @@ public class UpTransactionRelationships
     public UpRelationship ParentCategory { get; set; }
 
     [JsonPropertyName("tags")]
-    public UpRelationship Tags { get; set; }
+    public UpRelationshipCollection Tags { get; set; }
 
     [JsonPropertyName("attachment")]
     public UpRelationship Attachment { get; set; }
