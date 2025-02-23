@@ -19,12 +19,18 @@ public class UpQueryReader<T>
     private readonly HttpClient _Client;
     private Func<HttpClient, Task<HttpResponseMessage>>? _GetNextResponse;
 
-    public async Task<IEnumerable<T>> GetAllRemainingPageData()
+    public async Task<IEnumerable<T>> GetAllRemainingPageData(
+        CancellationToken token = default)
     {
         var output = new List<T>();
 
         while (!EndOfQuery)
+        {
+            if (token.IsCancellationRequested)
+                break;
+
             output.AddRange(await GetNextPageData());
+        }
 
         return output;
     }
