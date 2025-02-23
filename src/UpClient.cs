@@ -6,6 +6,12 @@ namespace UpBank;
 
 public class UpClient : IDisposable
 {
+    public UpClient(string accessToken)
+    {
+        this._Client = new HttpClient()
+            .ConfigureUpHttpClient(accessToken);
+    }
+
     public UpClient(HttpClient client)
     {
         this._Client = client;
