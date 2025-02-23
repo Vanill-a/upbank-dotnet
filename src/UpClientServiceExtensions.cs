@@ -8,7 +8,7 @@ public static class UpClientServiceExtensions
     public static IServiceCollection AddUpClient(
         this IServiceCollection services,
         string accessToken,
-        string uri = "https://api.up.com.au/api/v1")
+        string uri = "https://api.up.com.au/api/v1/")
     {
         services.AddScoped<UpClient>();
         services.AddHttpClient<UpClient>(client =>

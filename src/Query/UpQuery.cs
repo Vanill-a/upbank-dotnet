@@ -3,7 +3,7 @@ using System.Web;
 
 namespace UpBank.Query;
 
-public class UpQuery<T> : IDisposable
+public class UpQuery<T>
 {
     public UpQuery(HttpClient client, string endpoint)
     {
@@ -44,19 +44,17 @@ public class UpQuery<T> : IDisposable
 
     private Task<HttpResponseMessage> ExecuteQuery(HttpClient client)
     {
-        var uribuilder = new UriBuilder(Endpoint);
+        var uribuilder = new UriBuilder();
         var querystring = _Builder.ToString(); 
+
+        uribuilder.Path = Endpoint;
 
         if (!string.IsNullOrEmpty(querystring))
             uribuilder.Query = querystring;
 
-        return client.GetAsync(uribuilder.Uri);
+        var uri = uribuilder.Uri.PathAndQuery
+            .TrimStart('/');
+
+        return client.GetAsync(uri);
     }
-
-    #region Dispose
-
-    public void Dispose()
-        => _Client.Dispose();
-
-    #endregion
 }

@@ -43,7 +43,7 @@ public class UpTransactionAttributes
     public UpCardPurchaseMethod CardPurchaseMethod { get; set; }
 
     [JsonPropertyName("settledAt")]
-    public DateTime SettledAt { get; set; }
+    public DateTime? SettledAt { get; set; }
 
     [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; }

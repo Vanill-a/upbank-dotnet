@@ -36,7 +36,7 @@ public class UpQueryReader<T>
 
         // request should always have value if not end-of-query
         if (_GetNextResponse is null)
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("Next response delegate is null for open query.");
 
         var response = await _GetNextResponse(_Client);
 
