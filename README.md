@@ -17,6 +17,13 @@ using UpBank;
 
 builder.Services.AddUpClient("PERSONAL_ACCESS_TOKEN");
 ```
+### Basic Construction
+Alternatively, in non-DI apps, supply a personal access token to the `UpClient` constructor:
+```csharp
+using UpBank;
+
+var client = new UpClient("PERSONAL_ACCESS_TOKEN");
+```
 ## :wrench: Usage
 Interact with the UP API using the `UpClient`.
 This class provides methods for interacting with the various endpoints.
