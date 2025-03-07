@@ -94,11 +94,12 @@ public class UpClient : IDisposable
 
     #region Transactions
 
-    public UpQuery<UpTransactionResource> CreateTransactionQuery()
-        => new UpQuery<UpTransactionResource>(_Client, "transactions");
-
-    public UpQuery<UpTransactionResource> CreateAccountTransactionQuery(string accountId)
-        => new UpQuery<UpTransactionResource>(_Client, $"accounts/{accountId}/transactions");
+    public UpQuery<UpTransactionResource> CreateTransactionQuery(string? accountId = null)
+    {
+        return string.IsNullOrEmpty(accountId)
+            ? new UpQuery<UpTransactionResource>(_Client, "transactions")
+            : new UpQuery<UpTransactionResource>(_Client, $"accounts/{accountId}/transactions");
+    }
 
     public async Task<UpTransactionResource> GetTransaction(string transactionId)
         => await GetResource<UpTransactionResource>($"transactions/{transactionId}");
