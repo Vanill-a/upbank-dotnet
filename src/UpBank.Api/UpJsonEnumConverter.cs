@@ -12,8 +12,8 @@ public class UpJsonEnumConverter<T> : JsonConverter<T> where T : Enum
         _EnumMap = GetEnumMap(_StringMap);
     }
 
-    private static readonly IReadOnlyDictionary<string, T> _StringMap;
-    private static readonly IReadOnlyDictionary<T, string> _EnumMap;
+    internal static readonly IReadOnlyDictionary<string, T> _StringMap;
+    internal static readonly IReadOnlyDictionary<T, string> _EnumMap;
 
     public override T Read(
         ref System.Text.Json.Utf8JsonReader reader,
