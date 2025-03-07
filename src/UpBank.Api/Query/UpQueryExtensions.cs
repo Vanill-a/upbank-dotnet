@@ -6,8 +6,24 @@ public static class UpQueryExtensions
 
     public static UpQuery<UpAccountResource> FilterAccountType(
         this UpQuery<UpAccountResource> query,
+        UpAccountType accountType)
+    {
+        var value = UpJsonEnumConverter<UpAccountType>._EnumMap[accountType];
+        return query.FilterAccountType(value);
+    }
+
+    public static UpQuery<UpAccountResource> FilterAccountType(
+        this UpQuery<UpAccountResource> query,
         string accountType)
         => query.Filter("accountType", accountType);
+
+    public static UpQuery<UpAccountResource> FilterOwnershipType(
+        this UpQuery<UpAccountResource> query,
+        UpOwnershipType ownershipType)
+    {
+        var value = UpJsonEnumConverter<UpOwnershipType>._EnumMap[ownershipType];
+        return query.FilterOwnershipType(value);
+    }
 
     public static UpQuery<UpAccountResource> FilterOwnershipType(
         this UpQuery<UpAccountResource> query,
@@ -26,6 +42,14 @@ public static class UpQueryExtensions
     #endregion
 
     #region Transaction
+
+    public static UpQuery<UpTransactionResource> FilterStatus(
+        this UpQuery<UpTransactionResource> query,
+        UpTransactionStatus status)
+    {
+        var value = UpJsonEnumConverter<UpTransactionStatus>._EnumMap[status];
+        return query.FilterStatus(value);
+    }
 
     public static UpQuery<UpTransactionResource> FilterStatus(
         this UpQuery<UpTransactionResource> query,
