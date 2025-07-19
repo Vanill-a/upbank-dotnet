@@ -50,14 +50,16 @@ public class UpClient : IDisposable
     public async Task CategorizeTransaction(string transactionId, string? categoryId = null)
     {
         var uri = $"transactions/{transactionId}/relationships/category";
-        var input = !string.IsNullOrEmpty(categoryId)
-            ? new UpRelationshipData("categories", categoryId)
-            : null;
+        var input = new { data = 
+            !string.IsNullOrEmpty(categoryId)
+                ? new UpRelationshipData("categories", categoryId)
+                : null
+        };
 
         var content = JsonContent.Create(input);
-        var response = await _Client.PatchAsync(uri, content);
 
-        await response.EnsureUpSuccess();
+        await _Client.PatchAsync(uri, content)
+            .EnsureUpSuccess();
     }
 
     #endregion;
@@ -85,16 +87,16 @@ public class UpClient : IDisposable
             Method = method,
         };
 
-        var response = await _Client.SendAsync(message);
-
-        await response.EnsureUpSuccess();
+        await _Client.SendAsync(message)
+            .EnsureUpSuccess();
     }
 
     #endregion;
 
     #region Transactions
 
-    public UpQuery<UpTransactionResource> CreateTransactionQuery(string? accountId = null)
+    public UpQuery<UpTransactionResource> CreateTransactionQuery(
+        string? accountId = null)
     {
         return string.IsNullOrEmpty(accountId)
             ? new UpQuery<UpTransactionResource>(_Client, "transactions")
@@ -110,11 +112,10 @@ public class UpClient : IDisposable
 
     public async Task<UpPingResponse> Ping()
     {
-        var response = await _Client.GetAsync("util/ping");
+        var response = await _Client.GetAsync("util/ping")
+            .EnsureUpSuccess();
 
-        await response.EnsureUpSuccess();
-
-        var json = await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStreamAsync();
         var output = JsonSerializer.Deserialize<UpPingResponse>(json);
 
         if (output is null)
@@ -136,25 +137,41 @@ public class UpClient : IDisposable
     public async Task<UpWebhookResource> GetWebhook(string webhookId)
         => await GetResource<UpWebhookResource>($"webhooks/{webhookId}");
 
-    //public async Task<UpWebhookResource> CreateWebhook()
-    //    => throw new NotImplementedException();
+    public async Task<UpWebhookResource> CreateWebhook(
+        string url, string? description = null)
+    {
+        var uri = "webhooks";
+        var input = new { data =
+            new UpWebhookInputResource(
+                new UpWebhookInputAttributes(url, description))
+        };
+
+        var content = JsonContent.Create(input);
+        var response = await _Client.PostAsync(uri, content)
+            .EnsureUpSuccess();
+
+        var json = await response.Content.ReadAsStreamAsync();
+        var output = await JsonSerializer.DeserializeAsync<UpWebhookResource>(json);
+
+        if (output is null)
+            throw new InvalidOperationException("Deserialization returned null.");
+
+        return output;
+    }
 
     public async Task DeleteWebhook(string webhookId)
     {
-        var uri = $"webhooks/{webhookId}";
-        var response = await _Client.DeleteAsync(uri);
-
-        await response.EnsureUpSuccess();
+        await _Client.DeleteAsync($"webhooks/{webhookId}")
+            .EnsureUpSuccess();
     }
 
     public async Task<UpWebhookEventResource> PingWebhook(string webhookId)
     {
         var uri = $"webhooks/{webhookId}/ping";
-        var response = await _Client.PostAsync(uri, null);
+        var response = await _Client.PostAsync(uri, null)
+            .EnsureUpSuccess();
 
-        await response.EnsureUpSuccess();
-
-        var json = await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStreamAsync();
         var output = JsonSerializer.Deserialize<UpWebhookEventResource>(json);
 
         if (output is null)
@@ -167,9 +184,8 @@ public class UpClient : IDisposable
 
     public async Task<T> GetResource<T>(string endpoint) where T : class
     {
-        var response = await _Client.GetAsync(endpoint);
-
-        await response.EnsureUpSuccess();
+        var response = await _Client.GetAsync(endpoint)
+            .EnsureUpSuccess();
 
         var stream = await response.Content.ReadAsStreamAsync();
         var data = await JsonSerializer.DeserializeAsync<UpResponse<T>>(stream);
