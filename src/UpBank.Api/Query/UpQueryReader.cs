@@ -4,6 +4,8 @@ namespace UpBank.Api.Query;
 
 public class UpQueryReader<T>
 {
+    private readonly HttpClient _Client;
+
     internal UpQueryReader(
         HttpClient client,
         Func<HttpClient, Task<HttpResponseMessage>> executeQuery)
@@ -16,23 +18,19 @@ public class UpQueryReader<T>
 
     public bool EndOfQuery { get; private set; }
 
-    private readonly HttpClient _Client;
     private Func<HttpClient, Task<HttpResponseMessage>>? _GetNextResponse;
 
-    public async Task<IEnumerable<T>> GetAllRemainingPageData(
+    public async IAsyncEnumerable<T> ReadPagesAsync(
         CancellationToken token = default)
     {
-        var output = new List<T>();
-
         while (!EndOfQuery)
         {
-            if (token.IsCancellationRequested)
-                break;
+            if (!token.IsCancellationRequested)
+                yield break;
 
-            output.AddRange(await GetNextPageData());
+            foreach (var item in await GetNextPageData())
+                yield return item;
         }
-
-        return output;
     }
 
     public async Task<IEnumerable<T>> GetNextPageData()
