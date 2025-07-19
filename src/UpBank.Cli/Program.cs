@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Spectre.Console;
 using Spectre.Console.Cli;
 using UpBank.Api;
 using UpBank.Cli;
@@ -12,14 +11,7 @@ var registrar = new TypeRegistrar(services);
 var app = new CommandApp(registrar);
 
 app.Configure(builder =>
-{
-    builder.AddAccountCommands();
-    builder.AddAttachmentCommands();
-    builder.AddCategoryCommands();
-    builder.AddTagCommands();
-    builder.AddTransactionCommands();
-    builder.AddUtilityCommands();
-});
+    builder.AddUpCommands());
 
 await app.RunAsync(args);
 

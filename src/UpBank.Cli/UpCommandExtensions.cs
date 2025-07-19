@@ -10,7 +10,18 @@ namespace UpBank.Cli;
 
 public static class UpCommandExtensions
 {
-    public static void AddAccountCommands(
+    public static void AddUpCommands(
+        this IConfigurator config)
+    {
+        config.AddUpAccountCommands();
+        config.AddUpAttachmentCommands();
+        config.AddUpCategoryCommands();
+        config.AddUpTagCommands();
+        config.AddUpTransactionCommands();
+        config.AddUpUtilityCommands();
+    }
+
+    public static void AddUpAccountCommands(
         this IConfigurator config)
     {
         config.AddCommand<AccountListCommand>("accounts");
@@ -22,7 +33,7 @@ public static class UpCommandExtensions
         });
     }
 
-    public static void AddAttachmentCommands(
+    public static void AddUpAttachmentCommands(
         this IConfigurator config)
     {
         config.AddCommand<AttachmentListCommand>("attachments");
@@ -34,7 +45,7 @@ public static class UpCommandExtensions
         });
     }
 
-    public static void AddCategoryCommands(
+    public static void AddUpCategoryCommands(
         this IConfigurator config)
     {
         config.AddCommand<CategoryListCommand>("categories");
@@ -45,7 +56,7 @@ public static class UpCommandExtensions
         });
     }
 
-    public static void AddTagCommands(
+    public static void AddUpTagCommands(
         this IConfigurator config)
     {
         config.AddCommand<TagListCommand>("tags");
@@ -59,7 +70,7 @@ public static class UpCommandExtensions
         });
     }
 
-    public static void AddTransactionCommands(
+    public static void AddUpTransactionCommands(
         this IConfigurator config)
     {
         config.AddCommand<TransactionListCommand>("transactions");
@@ -71,7 +82,7 @@ public static class UpCommandExtensions
         });
     }
 
-    public static void AddUtilityCommands(
+    public static void AddUpUtilityCommands(
         this IConfigurator config)
     {
         config.AddCommand<PingCommand>("ping");

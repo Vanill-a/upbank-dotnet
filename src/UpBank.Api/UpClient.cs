@@ -6,6 +6,8 @@ namespace UpBank.Api;
 
 public class UpClient : IDisposable
 {
+    private readonly HttpClient _Client;
+
     public UpClient(string accessToken)
     {
         this._Client = new HttpClient()
@@ -16,8 +18,6 @@ public class UpClient : IDisposable
     {
         this._Client = client;
     }
-
-    private readonly HttpClient _Client;
 
     #region Accounts
 
