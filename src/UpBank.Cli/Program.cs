@@ -1,41 +1,34 @@
-﻿using ConsoleAppFramework;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Spectre.Console;
+using Spectre.Console.Cli;
 using UpBank.Api;
 using UpBank.Cli;
 
 var token = GetAccessToken();
-var app = ConsoleApp.Create()
-    .ConfigureServices(s =>
-    {
-        s.AddUpClient(token);
-    });
+var services = new ServiceCollection()
+    .AddUpClient(token);
 
-app.Add<AccountCommands>("account");
-app.Add<AttachmentCommands>("attachment");
-app.Add<CategoryCommands>("category");
-app.Add<TagCommands>("tag");
-app.Add<TransactionCommands>("transaction");
-app.Add<WebhookCommands>("webhook");
+var registrar = new TypeRegistrar(services);
+var app = new CommandApp(registrar);
 
-app.Add("ping", async ([FromServices] UpClient client) =>
+app.Configure(builder =>
 {
-    Console.WriteLine("Sending Ping...");
-
-    try
-    {
-        var ping = await client.Ping();
-
-        Console.WriteLine(ping.Id);
-    }
-    catch (UpApiException ex)
-    {
-        Console.WriteLine("Ping failed!");
-        Console.WriteLine(ex.Message);
-    }
+    builder.AddAccountCommands();
+    builder.AddAttachmentCommands();
+    builder.AddCategoryCommands();
+    builder.AddTagCommands();
+    builder.AddTransactionCommands();
+    builder.AddUtilityCommands();
 });
 
 await app.RunAsync(args);
 
 static string GetAccessToken()
 {
-    return Environment.GetEnvironmentVariable("UP_ACCESS_TOKEN");
+    var output = Environment.GetEnvironmentVariable("UP_ACCESS_TOKEN");
+
+    if (string.IsNullOrEmpty(output))
+        output = "";
+
+    return output;
 }
