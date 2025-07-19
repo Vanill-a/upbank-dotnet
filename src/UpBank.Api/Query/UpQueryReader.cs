@@ -42,9 +42,8 @@ public class UpQueryReader<T>
         if (_GetNextResponse is null)
             throw new InvalidOperationException("Next response delegate is null for open query.");
 
-        var response = await _GetNextResponse(_Client);
-
-        await response.EnsureUpSuccess();
+        var response = await _GetNextResponse(_Client)
+            .EnsureUpSuccess();
 
         var stream = await response.Content.ReadAsStreamAsync();
         var page = await JsonSerializer.DeserializeAsync<UpPageResponse<T>>(stream);
